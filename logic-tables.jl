@@ -41,7 +41,9 @@ function eval_statement(statement)
     end
     for i=1:length(sub_statements)-1
         sub = sub_statements[i]
-        result *= "$(sub) & "
+        result *= "\$$(sub)\$ & "
+        global ccount
+        ccount+=1
         print("$(sub)\t")
     end
     print("$(statement)")
@@ -63,12 +65,14 @@ function eval_statement(statement)
         end
         for j=1:length(sub_statements)
             sub=sub_statements[j]
-            if eval(sub)
-                global tcount
-                tcount+=1
-            else
-                global fcount
-                fcount+=1
+            if j == length(sub_statements)
+                if eval(sub)
+                    global tcount
+                    tcount+=1
+                else
+                    global fcount
+                    fcount+=1
+                end
             end
             result*="& $(eval(sub)) "
             print("$(eval(sub))\t")
@@ -127,7 +131,7 @@ result = replace(result, "∧"=>"\\land ")
 result = replace(result, "∨"=>"\\lor ")
 result = replace(result, "→"=>"\\rightarrow ")
 result = replace(result, "↔"=>"\\leftrightarrow ")
-result = string("\\begin{tabular}{","c "^ccount,"c}",result,"\\end{tabular}\n")
+result = string("\\begin{tabular}{","c "^ccount,"c} $result \\end{tabular}\n")
 if fcount == 0
     result *= "\n The statement is a tautology."
 elseif tcount == 0
