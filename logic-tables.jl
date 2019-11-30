@@ -78,6 +78,8 @@ function parse_input(input)
         input = replace(input, r"(.*) iff (.*)"=>s"\1 ↔ \2")
     end
     input = replace(input, "not "=>"¬")
+    input = replace(input, "<->"=>"↔")
+    input = replace(input, "->"=>"→")
     return input
 end
 
