@@ -13,7 +13,14 @@ Note that it is recommended to install it on MacOS using Homebrew: `brew cask in
 
 To run, execute the `julia logic-tables.jl "expression (optional)" "output_name(optional)"` command in your command line.
 
-Both expressuion and output_name are set as optional, since if no expression is provided, the utility will ask user for input and automatically save it in a file called "table". The table there is ready to use in your Latex file. 
+Both expressuion and output_name are set as optional, since if no expression is provided, the utility will ask user for input and automatically save it in a file called "table". The table there is ready to use in your Latex file.
+
+To use the LaTeX table, insert the following in the headers:
+ ```
+ \usepackage{amstext} % for \text macro
+ \usepackage{array}   % for \newcolumntype macr
+ \newcolumntype{L}{>{$}l<{$}} % math-mode version of "l" column type
+ ```
 
 ## Expressions
 
@@ -21,10 +28,15 @@ The utility does not use mathematical symbols, but uses natural language instead
 
 List of expressions:
 
-| Expression | Natural language (Julia syntax) |
-|:----------:|:-------------------------------:|
-| p ∧ q      | `p and q`                       |
-| p ∨ q      | `p or q`                        |
-| p → q      | `if p then q` / `p implies q`   |
-| p ↔ q      | `p iff q`                       |
-| ¬p         | `not p`                         |
+| Expression | Natural language (Julia syntax) |  Alternative notation  |
+|:----------:|:-------------------------------:|:----------------------:|
+| p ∧ q      | `p and q`                       | `p && q`               |
+| p ∨ q      | `p or q`                        | `p \|\| q`             |
+| p → q      | `p implies q`                   | `if p then q`\\`p -> q`|
+| p ↔ q      | `p iff q`                       | `p <-> q`              |
+| ¬p         | `not p`                         |                        |
+
+## Examples
+ `julia logic-tables.jl "if (a and b) then (c implies not a)"`
+
+  `julia logic-tables.jl "not (a -> b) or (b <-> a)" "output_table.tex"`
