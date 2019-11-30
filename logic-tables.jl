@@ -8,12 +8,13 @@
 ↔(p::Bool, q::Bool) = (p→q)&&(q→p)
 
 global ccount = 0
-
+global tcount = 0
+global fcount = 0
 operators = Set([:¬, :∧, :∨, :→, :↔])
 is_operator(x) = x in operators
 
 function dissect_expression(expression)
-# returns distinct parameters of the expression
+    # returns distinct parameters of the expression
     argument_symbols = Set{Symbol}()
     for symbol = expression.args
         if typeof(symbol) == Symbol
@@ -28,7 +29,7 @@ function dissect_expression(expression)
 end
 
 function eval_statement(statement)
-# prints the truth table and returns latex code
+    # prints the truth table and returns latex code
     parameters = sort(collect(dissect_expression(statement)))
     sub_statements = reverse(find_exprs(statement))
     result = ""
@@ -36,12 +37,12 @@ function eval_statement(statement)
         result*="\$$(param)\$ & "
         global ccount
         ccount+=1
-	print("$(param)\t")
+        print("$(param)\t")
     end
     for i=1:length(sub_statements)-1
-	sub = sub_statements[i]
-	result *= "$(sub) & "
-    	print("$(sub)\t")
+        sub = sub_statements[i]
+        result *= "$(sub) & "
+        print("$(sub)\t")
     end
     print("$(statement)")
     result*="\$$(statement)\$\\\\\\hline\n"
@@ -54,25 +55,32 @@ function eval_statement(statement)
             value = Bool(digs[j])
             eval(:($param = $value))
             if j == 1
-		result*="$(value)\t"
-	    else
-		result*="& $(value) "
-	    end
+                result*="$(value)\t"
+            else
+                result*="& $(value) "
+            end
             print("$(value)\t")
         end
-	for j=1:length(sub_statements)
-	    sub=sub_statements[j]
-	    result*="& $(eval(sub)) "
+        for j=1:length(sub_statements)
+            sub=sub_statements[j]
+            if eval(sub)
+                global tcount
+                tcount+=1
+            else
+                global fcount
+                fcount+=1
+            end
+            result*="& $(eval(sub)) "
             print("$(eval(sub))\t")
-	end
+        end
         result*="\\\\\n"
-	println()
+        println()
     end
     return result
 end
 
 function parse_input(input)
-# parses initial input to unique notation
+    # parses initial input to unique notation
     input = replace(input, "and" => "∧")
     input = replace(input, "or" => "∨")
     while occursin("if ", input)
@@ -91,7 +99,7 @@ function parse_input(input)
 end
 
 function find_exprs(p)
-# returns different sub expressions in expression
+    # returns different sub expressions in expression
     ex = []
     queue = []
     push!(queue, p)
@@ -101,7 +109,7 @@ function find_exprs(p)
                 push!(queue, a)
             end
         end
-       push!(ex, popfirst!(queue))
+        push!(ex, popfirst!(queue))
     end
     return ex
 end
@@ -120,6 +128,13 @@ result = replace(result, "∨"=>"\\lor ")
 result = replace(result, "→"=>"\\rightarrow ")
 result = replace(result, "↔"=>"\\leftrightarrow ")
 result = string("\\begin{tabular}{","c "^ccount,"c}",result,"\\end{tabular}\n")
+if fcount == 0
+    result *= "\n The statement is a tautology."
+elseif tcount == 0
+    result *= "\nThe statement is a contradiction."
+else
+    result *= "\nThe statement is satisfiable."
+end
 if length(ARGS)<=1
     filename="table"
 else
