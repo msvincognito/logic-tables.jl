@@ -131,7 +131,7 @@ result = replace(result, "∧"=>"\\land ")
 result = replace(result, "∨"=>"\\lor ")
 result = replace(result, "→"=>"\\rightarrow ")
 result = replace(result, "↔"=>"\\leftrightarrow ")
-result = string("\\begin{tabular}{","c "^ccount,"c} $result \\end{tabular}\n")
+result = string("\\begin{tabular}{","c "^ccount,"c}\n$result\\end{tabular}\n")
 if fcount == 0
     result *= "\n The statement is a tautology."
 elseif tcount == 0
