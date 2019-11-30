@@ -6,8 +6,9 @@
 →(p::Bool, q::Bool) = (p ∧ q) || ¬p
 ↔(p::Bool, q::Bool) = (p→q)&&(q→p)
 
-operators = Set([:¬, :∧, :∨, :→, :↔])
+global ccount = 0
 
+operators = Set([:¬, :∧, :∨, :→, :↔])
 is_operator(x) = x in operators
 
 function dissect_expression(expression)
@@ -29,7 +30,9 @@ function eval_statement(statement)
     sub_statements = reverse(find_exprs(statement))
     result = ""
     for param = parameters
-        result*="$(param) & "
+        result*="\$$(param)\$ & "
+        global ccount
+        ccount+=1
 	print("$(param)\t")
     end
     for i=1:length(sub_statements)-1
@@ -38,7 +41,7 @@ function eval_statement(statement)
     	print("$(sub)\t")
     end
     print("$(statement)")
-    result*="$(statement)\\\\\\hline\n"
+    result*="\$$(statement)\$\\\\\\hline\n"
     println()
 
     for i = 0:2^length(parameters) - 1
@@ -109,7 +112,7 @@ result = replace(result, "∧"=>"\\land ")
 result = replace(result, "∨"=>"\\lor ")
 result = replace(result, "→"=>"\\rightarrow ")
 result = replace(result, "↔"=>"\\leftrightarrow ")
-
+result = string("\\begin{tabular}{","c "^ccount,"c}",result,"\\end{tabular}\n")
 if length(ARGS)<=1
     filename="table"
 else
@@ -118,6 +121,6 @@ end
 open(filename, "w") do f
     write(f, result)
 end
- 
+
 
 print("Succesfully saved to $filename")
