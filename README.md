@@ -24,17 +24,12 @@ To use the LaTeX table, insert the following in the headers:
 
 ## Expressions
 
-The utility does not use mathematical symbols, but uses natural language instead.
-
-List of expressions:
-
-| Expression | Natural language (Julia syntax) |  Alternative notation  |
-|:----------:|:-------------------------------:|:----------------------:|
-| p ∧ q      | `p and q`                       | `p && q`               |
-| p ∨ q      | `p or q`                        | `p \|\| q`             |
-| p → q      | `p implies q`                   | `if p then q`\\`p -> q`|
-| p ↔ q      | `p iff q`                       | `p <-> q`              |
-| ¬p         | `not p`                         |                        |
+The following syntax is accepted:
+ - not a, ¬a
+ - a and b, a && b, a ∧ b
+ - a or b, a || b, a ∨ b
+ - if a then b, a implies b, a ->b, a → b
+ - a iff b, a <-> b, a ↔ b
 
 ## Examples
  `julia logic-tables.jl "if (a and b) then (c implies not a)"`
