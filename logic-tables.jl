@@ -1,5 +1,6 @@
-# \wedge is ∧ and \vee is ∨ and \land is ∧ and \lor is ∨
+# \wedge is ∧ and \vee is ∨
 
+# Define functions for operators
 ¬(p::Bool) = !p
 ∧(p::Bool, q::Bool) = p && q
 ∨(p::Bool, q::Bool) = p || q
@@ -11,6 +12,7 @@ operators = Set([:¬, :∧, :∨, :→, :↔])
 is_operator(x) = x in operators
 
 function dissect_expression(expression)
+# returns distinct parameters of the expression
     argument_symbols = Set{Symbol}()
     for symbol = expression.args
         if typeof(symbol) == Symbol
@@ -25,6 +27,7 @@ function dissect_expression(expression)
 end
 
 function eval_statement(statement)
+# prints the truth table and returns latex code
     parameters = sort(collect(dissect_expression(statement)))
     sub_statements = reverse(find_exprs(statement))
     result = ""
@@ -66,6 +69,7 @@ function eval_statement(statement)
 end
 
 function parse_input(input)
+# parses initial input to unique notation
     input = replace(input, "and" => "∧")
     input = replace(input, "or" => "∨")
     while occursin("if ", input)
@@ -84,6 +88,7 @@ function parse_input(input)
 end
 
 function find_exprs(p)
+# returns different sub expressions in expression
     ex = []
     queue = []
     push!(queue, p)
